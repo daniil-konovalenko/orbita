@@ -57,11 +57,10 @@ WHEN cpu.cycle == 2 DO
     END;
 END;
 
-WHEN cpu.cycle == 3 AND navigation.angle + 2 > target_angle DO 
+WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle AND DO 
 	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
-		CALL cpu.set_cycle(3);
     ELSE
         IF orientation.angular_velocity > w THEN
             CALL orientation.start_torsion(0 - M);
@@ -76,11 +75,10 @@ WHEN cpu.cycle == 3 AND navigation.angle + 2 > target_angle DO
 	CALL cpu.set_cycle(4);
 END;
 
-WHEN cpu.cycle == 4 AND navigation.angle - 2 > target_angle DO
+WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
 	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
-		CALL cpu.set_cycle(3);
     ELSE
         IF orientation.angular_velocity > w THEN
             CALL orientation.start_torsion(0 - M);
@@ -101,7 +99,6 @@ WHEN cpu.cycle == 5 DO
 	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
-		CALL cpu.set_cycle(3);
     ELSE
         IF orientation.angular_velocity > w THEN
             CALL orientation.start_torsion(0 - M);
