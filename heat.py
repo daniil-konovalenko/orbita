@@ -8,10 +8,11 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 G = 6.6742e-11
 Me = 5.9726e24
 R = 6371032
-horb = 619000
+horb = 650000
 m = 5.5
 w0 = 1
 vorb = sqrt(G * Me / (R + horb))
+GMP = 216
 
 T = 2 * pi * (R + horb) / vorb
 w = 360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
@@ -19,8 +20,8 @@ w = 360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
 angle = 0
 full_angle = angle
 alpha = degrees(acos(R / (R + horb)))
-alpha_start = 255 - alpha
-alpha_stop = 255 + alpha
+alpha_start = GMP - alpha
+alpha_stop = GMP + alpha
 
 # Тепловые параметры
 sigma = 5.67e-8
