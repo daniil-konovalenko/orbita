@@ -4,7 +4,7 @@ from numpy import arange
 G = 6.6742e-11
 Me = 5.9726e24
 R = 6371032
-horb = 619000
+horb = 650000
 m = 5.5
 w0 = 1
 vorb = sqrt(G * Me / (R + horb))
