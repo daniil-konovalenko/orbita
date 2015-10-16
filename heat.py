@@ -42,7 +42,7 @@ c = 800
 Q = 0
 for device in devices.keys():
     if devices[device]['a_init']:
-        Q += devices[device]['a_init']
+        Q += devices[device]["Q"]
 
 S = a ** 2 * 6
 S_sb = S * 4 / 6
