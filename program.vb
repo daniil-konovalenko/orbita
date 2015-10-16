@@ -5,22 +5,18 @@ LET pi = 3.14159265;
 LET M_e = 5.9726e24;
 LET GMP = 216;
 LET target_angle = 81;
-
 REM Параметры аппарата
-LET m0 = 19.3;
-LET M = 0.000001;
+LET m0 = 21.5;
+LET M = 0.00001;
 LET Mmax = 0.0026;
-LET a = 0.5;
-LET Iz = 1 / 6 * a * a * m0;
-LET eps = Mmax / Iz;
 LET heater_on = FALSE;
 REM Полетные параметры
-LET horb = 619000;
+LET horb = 650000;
 LET vorb = SQRT(G * M_e / (R + horb));
 
-LET w = -0.061899;
-LET M0 = -4.324165e-05;
-LET t = 508.52283;
+LET w = -0.0614897;
+LET M0 = -0.001678;
+LET t = 508.71901;
 
 REM Углы начала/конца передачи
 LET tr_start_angle = GMP - ACOS(R / (R + horb));
@@ -129,7 +125,7 @@ WHEN navigation.dark_side == FALSE DO
 	heater_on = FALSE;
 END;
 
-WHEN heat_control.temperature > 310 AND heater_on == TRUE DO
+WHEN heat_control.temperature > 288 AND heater_on == TRUE DO
 	CALL heat_control.stop_heating();
 	heater_on = TRUE;
 END;
