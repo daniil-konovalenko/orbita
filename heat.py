@@ -46,7 +46,7 @@ for device in devices.keys():
 
 S = a ** 2 * 6
 S_sb = S * 4 / 6
-S_rad = S * 2 / 6 * 0.8
+S_rad = S * 2 / 6 * 0.05
 
 # Энергетические параметры
 
@@ -64,6 +64,13 @@ def camera_is_on():
         return True
     else:
         return False
+
+def heat_on():
+    if qc() == 0:
+        return True
+    else:
+        return False
+
 
 def stabilization():
     w = -360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
@@ -179,7 +186,9 @@ data = {
     'temp': temp_list,
     'P': P_list,
     'time': time_list,
-    'qc': qc_list
+    'qc': qc_list,
+    'charge': charge_list,
+    'Pe': Pe_list
 }
 with open('telemetry.json', 'w', encoding='utf8') as fout:
     json.dump(data, fout)
@@ -187,7 +196,7 @@ with open('telemetry.json', 'w', encoding='utf8') as fout:
 
 
 plt.figure(1)
-plt.plot(angle_list, angle_list, 'g')
+plt.plot(angle_list, temp_list, 'g')
 plt.title('Temperature / angle')
 plt.figure(2)
 plt.plot(angle_list, P_list, 'r')
