@@ -55,7 +55,6 @@ WHEN cpu.cycle == 2 DO
             moment = TRUE;
         END;
     END;
-
 END;
 
 WHEN cpu.cycle == 3 AND navigation.angle + 2 > target_angle DO 
@@ -78,7 +77,7 @@ WHEN cpu.cycle == 3 AND navigation.angle + 2 > target_angle DO
 END;
 
 WHEN cpu.cycle == 4 AND navigation.angle - 2 > target_angle DO
-IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
+	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
 		CALL cpu.set_cycle(3);
@@ -122,9 +121,14 @@ WHEN cpu.cycle == 5 DO
 END;
 
 
-WHEN heat_control.temperature < 278 AND heater_on == False DO
+WHEN navigation.dark_side == TRUE DO
 	heat_control.start_heating();
 	heater_on = TRUE;
 END;
 
-WHEN heat_control.temperature > 310 AND heater_on == TRUE 
+WHEN heat_control.temperature > 310 AND heater_on == TRUE DO
+	heat_control.stop_heating();
+	heater_on = TRUE;
+END;
+
+	
