@@ -1,4 +1,5 @@
 from math import sqrt
+
 from orbita import density, g
 
 file = open('wshieldplanet.txt')

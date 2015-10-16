@@ -45,7 +45,7 @@ for device in devices.keys():
         Q += devices[device]["Q"]
 
 S = a ** 2 * 6
-S_sb = S * 4 / 6 * 0.75
+S_sb = S * 4 / 6 * 0.70
 S_rad = S * 2 / 6
 
 # Энергетические параметры
