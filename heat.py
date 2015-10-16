@@ -28,21 +28,6 @@ alpha = degrees(acos(R / (R + horb)))
 radio_start_angle = GMP - alpha
 radio_stop_angle = GMP + alpha
 
-devices = {
-    "Body":{
-        "M": 10,
-        "V": 0.125 * 10**(-3),
-        "T_min": 173,
-        "T_max": 373,
-        "P": 0,
-        "Q": 0,
-        "a": 0.5,
-    },
-    "Computing":{
-        "M": 1.5,
-        "V":
-    }
-}
 
 # Тепловые параметры
 sigma = 5.67e-8
