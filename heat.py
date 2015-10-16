@@ -50,7 +50,7 @@ S_rad = S * 2 / 6 * 0.05
 
 # Энергетические параметры
 
-max_charge = 41.8 * 3600
+max_charge = devices['Accumulator']["Cap"] * 3600
 charge = max_charge
 
 # Параметры камеры
