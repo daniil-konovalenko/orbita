@@ -6,7 +6,7 @@ LET M_e = 5.9726e24;
 LET GMP = 216;
 LET target_angle = 81;
 REM Параметры аппарата
-LET m0 = ;
+LET m0 = 19.3;
 LET M = 0.000001;
 LET Mmax = 0.0026;
 LET a = 0.1503;
@@ -57,7 +57,7 @@ WHEN cpu.cycle == 2 DO
     END;
 END;
 
-WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle AND DO 
+WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle DO 
 	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
@@ -119,17 +119,17 @@ END;
 
 
 WHEN navigation.dark_side == TRUE AND heat_control.temperature < 283 DO
-	heat_control.start_heating();
+	CALL heat_control.start_heating();
 	heater_on = TRUE;
 END;
 
 WHEN navigation.dark_side == FALSE DO
-	heat_control.stop_heating();
+	CALL heat_control.stop_heating();
 	heater_on = FALSE;
 END;
 
 WHEN heat_control.temperature > 310 AND heater_on == TRUE DO
-	heat_control.stop_heating();
+	CALL heat_control.stop_heating();
 	heater_on = TRUE;
 END;
 

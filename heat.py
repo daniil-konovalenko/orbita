@@ -46,7 +46,7 @@ for device in devices.keys():
 
 S = a ** 2 * 6
 S_sb = S * 4 / 6
-S_rad = S * 2 / 6 * 0.05
+S_rad = S * 2 / 6 * 0.1
 
 # Энергетические параметры
 
@@ -106,7 +106,7 @@ def Qin():
     return Q
 
 def dT_dt():
-    Q_outer = ((S_sb * A_sb / 4 + S_rad * A_rad / 4) * qc() -
+    Q_outer = ((S_sb * A_sb / 4) * qc() -
                 (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
     Q_inner = Qin()
     return (Q_outer + Q_inner) / (c * m)
