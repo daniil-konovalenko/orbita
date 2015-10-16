@@ -11,7 +11,7 @@ Me = 5.9726e24
 R = 6371032
 k = 1.38064852e-23
 horb = 650000
-m = 19.3
+m = sum([devices[device]['m'] for device in devices.keys()])
 w0 = 1
 vorb = sqrt(G * Me / (R + horb))
 a = 0.5
@@ -31,14 +31,18 @@ radio_stop_angle = GMP + alpha
 
 # Тепловые параметры
 sigma = 5.67e-8
-A_sb = 0.95
-A_rad = 0.2
-eps_sb = 0.4
-eps_rad = 1
+A_sb = devices["Accumulator"]["A_sb"]
+A_rad = devices["Heating"]["A_rad"]
+eps_sb = devices["Accumulator"]["eps_sb"]
+eps_rad = devices["Heating"]["eps_rad"]
 T0 = 290
-Tmin = 273
-Tmax = 313
+Tmin = max([devices[device]['T_min'] for device in devices.keys()])
+Tmax = min([devices[device]['T_max'] for device in devices.keys()])
 c = 800
+Q = 0
+for device in devices.keys():
+    if devices[device]['a_init']:
+        Q += devices[device]['a_init']
 
 S = a ** 2 * 6
 S_sb = S * 4 / 6
@@ -50,12 +54,6 @@ max_charge = 41.8 * 3600
 charge = max_charge
 
 # Параметры камеры
-camera = {
-    'd': 4864,
-    'teta_max': 6.4,
-    'data_flow': 70,
-    'storage': 512 * 8
-}
 
 camera_start_angle = target - 1
 camera_stop_angle = target + 1
@@ -90,11 +88,14 @@ def qc():
         return 0
 
 def Qin():
-    Q = 10.3
+    Q = 0
+    for device in devices.keys():
+        if devices[device]['a_init']:
+            Q += devices[device]['Q']
     if radio_start_angle <= angle <= radio_stop_angle:
-        Q += 1
+        Q += devices['Radio']['P']
     if camera_is_on():
-        Q += 5
+        Q += devices['Camera']['P']
     return Q
 
 def dT_dt():
@@ -104,7 +105,8 @@ def dT_dt():
     return (Q_outer + Q_inner) / (c * m)
 
 def D():
-    return 2 * horb * tan(camera['teta_max'] / 2) / camera['d']
+    return (2 * horb * tan(devices["Camera"]['teta_max'] / 2) /
+            (devices["Camera"]['d']))
 
 def xy(alpha, r=R+horb):
 
