@@ -121,7 +121,7 @@ WHEN cpu.cycle == 5 DO
 END;
 
 
-WHEN navigation.dark_side == TRUE DO
+WHEN navigation.dark_side == TRUE AND heat_control.temperature < 283 DO
 	heat_control.start_heating();
 	heater_on = TRUE;
 END;
