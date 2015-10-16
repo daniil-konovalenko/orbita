@@ -8,6 +8,7 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 G = 6.6742e-11
 Me = 5.9726e24
 R = 6371032
+k = 1.38064852e-23
 horb = 650000
 m = 19.3
 w0 = 1
@@ -38,7 +39,6 @@ devices = {
     },
     "Computing":{
         "M": 1.5,
-        "V":
     }
 }
 
