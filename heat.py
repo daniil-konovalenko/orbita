@@ -28,13 +28,17 @@ radio_stop_angle = GMP + alpha
 
 devices = {
     "Body":{
-        "Mass": 10,
-        "Side": 0.5,
-        "Volume": 0.125 * 10**(-3)
+        "M": 10,
+        "V": 0.125 * 10**(-3),
         "T_min": 173,
         "T_max": 373,
         "P": 0,
-        "Q": 0
+        "Q": 0,
+        "a": 0.5,
+    },
+    "Computing":{
+        "M": 1.5,
+        ""
     }
 }
 
