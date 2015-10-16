@@ -38,7 +38,7 @@ devices = {
     },
     "Computing":{
         "M": 1.5,
-        ""
+        "V":
     }
 }
 
