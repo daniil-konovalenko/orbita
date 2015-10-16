@@ -17,11 +17,13 @@ T = 2 * pi * (R + horb) / vorb
 w = 360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
 
 GMP = 216
+target = 81
 angle = 0
 full_angle = angle
 alpha = degrees(acos(R / (R + horb)))
-alpha_start = GMP - alpha
-alpha_stop = GMP + alpha
+
+radio_start_angle = GMP - alpha
+radio_stop_angle = GMP + alpha
 
 # Тепловые параметры
 sigma = 5.67e-8
@@ -39,14 +41,27 @@ S_sb = S * 4 / 6
 S_rad = S * 2 / 6 * 0.8
 
 # Энергетические параметры
+
 max_charge = 41.8 * 3600
 charge = max_charge
 
 # Параметры камеры
-d = 4864
-teta_max = 6.4
-data_flow = 70 #Поток данных, Мбит/с
-storage = 512 * 8 #Объем памяти, Мбит
+camera = {
+    'd': 4864,
+    'teta_max': 6.4,
+    'data_flow': 70,
+    'storage': 512 * 8
+}
+
+camera_start_angle = target - 1
+camera_stop_angle = target + 1
+shooted = False
+
+def camera_is_on():
+    if camera_start_angle <= full_angle <= camera_stop_angle and not shooted:
+        return True
+    else:
+        return False
 
 # Переход с орбиты радиусом R1 на орбиту радиуса R2
 def dV(R1, R2):
@@ -64,9 +79,13 @@ def qc():
         return 0
 
 def Qin():
-    Q = 8.8
-    if alpha_start <= angle <= alpha_stop:
+    Q = 10.3
+    if radio_start_angle <= angle <= radio_stop_angle:
         Q += 1
+    if camera_is_on():
+        Q += 5
+
+
     return Q
 
 def dT_dt():
@@ -76,7 +95,7 @@ def dT_dt():
     return (Q_outer + Q_inner) / (c * m)
 
 def D():
-    return 2 * horb * tan(teta_max / 2) / d
+    return 2 * horb * tan(camera['teta_max'] / 2) / camera['d']
 
 
 time = 0
