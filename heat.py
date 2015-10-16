@@ -17,6 +17,7 @@ GMP = 216
 T = 2 * pi * (R + horb) / vorb
 w = 360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
 
+GMP = 216
 angle = 0
 full_angle = angle
 alpha = degrees(acos(R / (R + horb)))
@@ -33,7 +34,8 @@ T0 = 290
 Tmin = 263
 Tmax = 313
 c = 800
-S = 0.1503 ** 2 * 6
+a = 0.1503
+S = a ** 2 * 6
 S_sb = S * 4 / 6
 S_rad = S * 2 / 6 * 0.8
 
