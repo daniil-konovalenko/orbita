@@ -58,6 +58,7 @@ docs/_build/
 
 # PyBuilder
 target/
+/telemetry.json
 
 # PyCharm settings
 .idea/
