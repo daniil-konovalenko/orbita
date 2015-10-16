@@ -1,19 +1,13 @@
 REM Константы
 LET R = 6371032;
-LET G = 6.6742e-11;
-LET pi = 3.14159265;
-LET M_e = 5.9726e24;
 LET GMP = 216;
 LET target_angle = 81;
 REM Параметры аппарата
-LET m0 = 21.5;
 LET M = 0.00001;
 LET Mmax = 0.0026;
 LET heater_on = FALSE;
 REM Полетные параметры
 LET horb = 650000;
-LET vorb = SQRT(G * M_e / (R + horb));
-
 LET w = -0.0614897;
 LET M0 = -0.001678;
 LET t = 508.71901;
