@@ -15,9 +15,9 @@ m = sum([devices[device]['m'] for device in devices.keys()])
 w0 = 1
 vorb = sqrt(G * Me / (R + horb))
 a = 0.5
-I = 1 / 12 * 2 * a**2 * m
+I = 1 / 12 * 2 * a ** 2 * m
 T = 2 * pi * (R + horb) / vorb
-w = 360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
+w = 360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
 
 GMP = 216
 target = 81
@@ -45,8 +45,8 @@ for device in devices.keys():
         Q += devices[device]["Q"]
 
 S = a ** 2 * 6
-S_sb = S * 4 / 6
-S_rad = S * 2 / 6 * 0.1
+S_sb = S * 4 / 6 * 0.75
+S_rad = S * 2 / 6
 
 # Энергетические параметры
 
@@ -59,11 +59,13 @@ camera_start_angle = target - 1
 camera_stop_angle = target + 1
 shot = False
 
+
 def camera_is_on():
     if camera_start_angle <= full_angle <= camera_stop_angle and not shot:
         return True
     else:
         return False
+
 
 def heat_on():
     if qc() == 0:
@@ -73,8 +75,8 @@ def heat_on():
 
 
 def stabilization():
-    w = -360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
-    t = 2*270 / (w0 - w)
+    w = -360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
+    t = 2 * 270 / (w0 - w)
     M0 = (w - w0) * I / t
     print('w = {} t = {} M0 = {}'.format(w, t, M0))
 
@@ -85,14 +87,17 @@ def dV(R1, R2):
     V2 = sqrt(G * Me / R2) * (1 - sqrt(2 * R1 / (R1 + R2)))
     return V1 + V2
 
+
 def Pe():
-    return 0.298 * S_sb / 4 * qc() - Qin()
+    return devices["Accumulator"]["n"] * S_sb / 4 * qc() - Qin()
+
 
 def qc():
     if 0 <= angle <= 180:
         return 1400
     else:
         return 0
+
 
 def Qin():
     Q = 0
@@ -105,18 +110,20 @@ def Qin():
         Q += devices['Camera']['P']
     return Q
 
+
 def dT_dt():
     Q_outer = ((S_sb * A_sb / 4) * qc() -
                 (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
     Q_inner = Qin()
     return (Q_outer + Q_inner) / (c * m)
 
+
 def D():
     return (2 * horb * tan(devices["Camera"]['teta_max'] / 2) /
             (devices["Camera"]['d']))
 
-def xy(alpha, r=R+horb):
 
+def xy(alpha, r=R + horb):
     if alpha > 90:
         x = r * cos(radians(450 - alpha))
         y = r * sin(radians(450 - alpha))
@@ -135,13 +142,14 @@ def bandwidth(x_y):
     G_1 = 1
     G_2 = 16
     P1 = 5
-    l = 299792458 / 435e6 # Длина волны
+    l = 299792458 / 435e6  # Длина волны
     L_gmp = sqrt((x_gmp - x) ** 2 + (y_gmp - y) ** 2)
     L_12 = (4 * pi * L_gmp / l) ** 2
     P_2 = G_1 * G_2 * P1 / L_12
     T_2 = 1000
 
     return 1 / 100 * P_2 * log2(M) / (1.2 * k * T_2)
+
 
 time = 0
 dt = 1 / 500
@@ -158,13 +166,13 @@ Pe_list = [Pe()]
 while time <= 6 * 3600:
 
     angle += w * dt
-    full_angle += w*dt
+    full_angle += w * dt
     angle = angle % 360
     temp += dT_dt() * dt
     charge += Pe() * dt
     charge = min(charge, max_charge)
 
-    if int(time) / 5 == round(time / 5 , 3):
+    if int(time) / 5 == round(time / 5, 3):
         temp_list.append(temp)
         time_list.append(time)
         qc_list.append(qc())
@@ -176,10 +184,12 @@ while time <= 6 * 3600:
     time += dt
 
     if int(time) == round(time, 3):
-        logging.info('T={:.1f} Angle={:.3f} Temperature={:.2f} Q={:.3f} Pe={:.3f} Chrg={:.2f} qc={}'.format(time, angle, temp, dT_dt() * c * m, Pe(), charge, qc()))
+        logging.info(
+            'T={:.1f} Angle={:.3f} Temperature={:.2f} Q={:.3f} Pe={:.3f} Chrg={:.2f} qc={}'.format(
+                time, angle, temp, dT_dt() * c * m, Pe(), charge, qc()))
 
-
-logging.info('Max temp: {:.2f} Min temp: {:.2f}'.format(max(temp_list), min(temp_list)))
+logging.info(
+    'Max temp: {:.2f} Min temp: {:.2f}'.format(max(temp_list), min(temp_list)))
 
 data = {
     'angle': angle_list,
@@ -193,7 +203,6 @@ data = {
 with open('telemetry.json', 'w', encoding='utf8') as fout:
     json.dump(data, fout)
     logging.info('DUMPED')
-
 
 plt.figure(1)
 plt.plot(angle_list, temp_list, 'g')

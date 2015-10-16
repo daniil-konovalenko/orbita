@@ -5,11 +5,12 @@ LET pi = 3.14159265;
 LET M_e = 5.9726e24;
 LET GMP = 216;
 LET target_angle = 81;
+
 REM Параметры аппарата
 LET m0 = 19.3;
 LET M = 0.000001;
 LET Mmax = 0.0026;
-LET a = 0.1503;
+LET a = 0.5;
 LET Iz = 1 / 6 * a * a * m0;
 LET eps = Mmax / Iz;
 LET heater_on = FALSE;
