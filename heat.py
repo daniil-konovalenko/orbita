@@ -105,6 +105,33 @@ def dT_dt():
 def D():
     return 2 * horb * tan(camera['teta_max'] / 2) / camera['d']
 
+def xy(alpha, r=R+horb):
+
+    if alpha > 90:
+        x = r * cos(radians(450 - alpha))
+        y = r * sin(radians(450 - alpha))
+    else:
+        x = r * cos(radians(90 - alpha))
+        y = r * sin(radians(90 - alpha))
+    return (x, y)
+
+
+def bandwidth(x_y):
+    x = x_y[0]
+    y = x_y[1]
+    x_gmp = R * cos(radians(195))
+    y_gmp = R * sin(radians(195))
+    M = 4
+    G_1 = 1
+    G_2 = 16
+    P1 = 5
+    l = 299792458 / 435e6 # Длина волны
+    L_gmp = sqrt((x_gmp - x) ** 2 + (y_gmp - y) ** 2)
+    L_12 = (4 * pi * L_gmp / l) ** 2
+    P_2 = G_1 * G_2 * P1 / L_12
+    T_2 = 1000
+
+    return 1 / 100 * P_2 * log2(M) / (1.2 * k * T_2)
 
 time = 0
 dt = 1 / 500
