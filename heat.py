@@ -4,6 +4,7 @@ import json
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
+devices = json.load(open('devices.json'))
 
 G = 6.6742e-11
 Me = 5.9726e24
@@ -39,6 +40,7 @@ devices = {
     },
     "Computing":{
         "M": 1.5,
+        "V":
     }
 }
 
