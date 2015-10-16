@@ -123,6 +123,11 @@ WHEN navigation.dark_side == TRUE AND heat_control.temperature < 283 DO
 	heater_on = TRUE;
 END;
 
+WHEN navigation.dark_side == FALSE DO
+	heat_control.stop_heating();
+	heater_on = FALSE;
+END;
+
 WHEN heat_control.temperature > 310 AND heater_on == TRUE DO
 	heat_control.stop_heating();
 	heater_on = TRUE;
