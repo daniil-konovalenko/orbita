@@ -9,11 +9,11 @@ G = 6.6742e-11
 Me = 5.9726e24
 R = 6371032
 horb = 650000
-m = 5.5
+m = 19.3
 w0 = 1
 vorb = sqrt(G * Me / (R + horb))
-GMP = 216
-
+a = 0.5
+I = 1 / 12 * 2 * a**2 * m
 T = 2 * pi * (R + horb) / vorb
 w = 360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
 
@@ -33,10 +33,10 @@ A_rad = 0.2
 eps_sb = 0.4
 eps_rad = 1
 T0 = 290
-Tmin = 263
+Tmin = 273
 Tmax = 313
 c = 800
-a = 0.1503
+
 S = a ** 2 * 6
 S_sb = S * 4 / 6
 S_rad = S * 2 / 6 * 0.8
@@ -56,13 +56,20 @@ camera = {
 
 camera_start_angle = target - 1
 camera_stop_angle = target + 1
-shooted = False
+shot = False
 
 def camera_is_on():
-    if camera_start_angle <= full_angle <= camera_stop_angle and not shooted:
+    if camera_start_angle <= full_angle <= camera_stop_angle and not shot:
         return True
     else:
         return False
+
+def stabilization():
+    w = -360 * sqrt(G * Me/(R + horb)) / (2 * pi * (R + horb))
+    t = 2*270 / (w0 - w)
+    M0 = (w - w0) * I / t
+    print('w = {} t = {} M0 = {}'.format(w, t, M0))
+
 
 # Переход с орбиты радиусом R1 на орбиту радиуса R2
 def dV(R1, R2):
