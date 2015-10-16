@@ -26,6 +26,18 @@ alpha = degrees(acos(R / (R + horb)))
 radio_start_angle = GMP - alpha
 radio_stop_angle = GMP + alpha
 
+devices = {
+    "Body":{
+        "Mass": 10,
+        "Side": 0.5,
+        "Volume": 0.125 * 10**(-3)
+        "T_min": 173,
+        "T_max": 373,
+        "P": 0,
+        "Q": 0
+    }
+}
+
 # Тепловые параметры
 sigma = 5.67e-8
 A_sb = 0.95
@@ -92,13 +104,11 @@ def Qin():
         Q += 1
     if camera_is_on():
         Q += 5
-
-
     return Q
 
 def dT_dt():
     Q_outer = ((S_sb * A_sb / 4 + S_rad * A_rad / 4) * qc() -
-    (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
+                (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
     Q_inner = Qin()
     return (Q_outer + Q_inner) / (c * m)
 
@@ -155,16 +165,14 @@ with open('telemetry.json', 'w', encoding='utf8') as fout:
     json.dump(data, fout)
     logging.info('DUMPED')
 
+
 plt.figure(1)
-plt.plot(time_list, temp_list, 'b')
-plt.title('Temperature / time')
-plt.figure(2)
-plt.plot(angle_list, temp_list, 'g')
+plt.plot(angle_list, angle_list, 'g')
 plt.title('Temperature / angle')
-plt.figure(3)
+plt.figure(2)
 plt.plot(angle_list, P_list, 'r')
 plt.title('P / angle')
-plt.figure(4)
+plt.figure(3)
 plt.plot(time_list, charge_list)
 plt.title('Charge / time')
 plt.show()
