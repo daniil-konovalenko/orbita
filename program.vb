@@ -18,7 +18,7 @@ LET tr_stop_angle = GMP + ACOS(R / (R + horb));
 
 LET dw = 0.01;
 LET moment = FALSE;
-LET da = 0.0001;
+LET da = 0.01;
 LET sent = FALSE;
 
 WHEN cpu.flight_time == 0.0 DO
@@ -31,7 +31,7 @@ WHEN cpu.cycle == 1 AND cpu.flight_time >= t DO
     CALL orientation.stop_torsion();
 END;
 
-WHEN cpu.cycle == 2 DO
+WHEN cpu.cycle == 2 OR (cpu.cycle == 3 AND navigation.angle + 1 < target_angle)DO
     IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
@@ -67,6 +67,8 @@ WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle DO
 END;
 
 WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
+	CALL radio.set_mode("ON");
+	CALL telemetry.send_long_message("RADIO ON");
 	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
@@ -80,9 +82,7 @@ WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
             moment = TRUE;
         END;
     END;
-	CALL radio.set_mode("ON");
 	CALL load.set_mode("OFF");
-	CALL radio.set_mode("OFF");
 	CALL cpu.set_cycle(5);
 END;
 
@@ -100,11 +100,14 @@ WHEN cpu.cycle == 5 DO
             moment = TRUE;
         END;
     END;
-	IF ABS(navigation.angle - tr_start_angle) < da THEN
+	IF navigation.angle > tr_start_angle - da THEN
 		CALL radio.set_mode("ON");
+		CALL telemetry.send_long_message("TRANSMISSION STARTED");
 	END;
-	IF ABS(navigation.angle - tr_stop_angle) < da THEN
+	IF navigation.angle > tr_stop_angle + da THEN
 		CALL radio.set_mode("OFF");
+		CALL telemetry.send_long_message("RADIO OFF");
+		CALL telemetry.send_long_message("TRANSMISSION STOPPED");
 	END;
 END;
 
@@ -115,7 +118,7 @@ WHEN navigation.dark_side == TRUE AND heat_control.temperature < 283 DO
 END;
 
 WHEN navigation.dark_side == FALSE DO
-	CALL heat_control.start_heating();
+	CALL heat_control.stop_heating();
 	heater_on = FALSE;
 END;
 
