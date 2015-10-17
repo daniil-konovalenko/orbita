@@ -34,7 +34,7 @@ WHEN cpu.cycle == 1 AND cpu.flight_time >= t DO
     CALL orientation.stop_torsion();
 END;
 
-WHEN cpu.cycle == 2 OR (cpu.cycle == 3 AND navigation.angle + 1 < target_angle)DO
+WHEN cpu.cycle == 2 OR (cpu.cycle == 3 AND navigation.angle + 1 < target_angle) DO
     IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
