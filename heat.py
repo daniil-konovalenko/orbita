@@ -23,6 +23,8 @@ GMP = 216
 target = 81
 angle = 0
 full_angle = angle
+
+# TODO:  Вставить новую формулу угла
 alpha = degrees(acos(R / (R + horb)))
 
 radio_start_angle = GMP - alpha
@@ -141,10 +143,10 @@ def bandwidth(x_y):
     x_gmp = R * cos(radians(195))
     y_gmp = R * sin(radians(195))
     M = 4
-    G_1 = 1
-    G_2 = 16
-    P1 = 5
-    l = 299792458 / 435e6  # Длина волны
+    G_1 = devices['Radio']['G1']
+    G_2 = devices['Radio']['G2']
+    P1 = devices['Radio']['P_tr']
+    l = 299792458 / devices['Radio']['f']  # Длина волны
     L_gmp = sqrt((x_gmp - x) ** 2 + (y_gmp - y) ** 2)
     L_12 = (4 * pi * L_gmp / l) ** 2
     P_2 = G_1 * G_2 * P1 / L_12
