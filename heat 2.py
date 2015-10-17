@@ -63,7 +63,9 @@ M0 = (w - w0) * I / t_torsion
 
 
 def camera_is_on():
+    global shot
     if camera_start_angle <= full_angle <= camera_stop_angle and not shot:
+        shot = False
         return True
     else:
         return False
