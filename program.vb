@@ -50,7 +50,7 @@ WHEN cpu.cycle >= 2 DO
     END;
 END;
 
-WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle DO 
+WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle DO
 	CALL load.set_mode("ON");
 	CALL cpu.set_cycle(4);
 END;
