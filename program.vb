@@ -63,11 +63,11 @@ WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
 END;
 
 WHEN cpu.cycle == 5 DO
-	IF navigation.angle > tr_start_angle - da THEN
+	IF ABS(navigation.angle - tr_start_angle) < da THEN
 		CALL radio.set_mode("ON");
 		CALL telemetry.send_log_message("TRANSMISSION STARTED");
 	END;
-	IF navigation.angle > tr_stop_angle + da THEN
+	IF ABS(navigation.angle - tr_stop_angle) < da THEN
 		CALL radio.set_mode("OFF");
 		CALL telemetry.send_log_message("RADIO OFF");
 		CALL telemetry.send_log_message("TRANSMISSION STOPPED");
