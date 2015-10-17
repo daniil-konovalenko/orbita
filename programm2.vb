@@ -5,7 +5,6 @@ LET target_angle = 81;
 
 REM Параметры аппарата
 LET M = 0.00001;
-LET Mmax = 0.0026;
 LET heater_on = FALSE;
 
 REM Полетные параметры
