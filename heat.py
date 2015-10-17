@@ -31,10 +31,10 @@ radio_stop_angle = GMP + alpha
 
 # Тепловые параметры
 sigma = 5.67e-8
-A_sb = devices["Accumulator"]["A_sb"]
-A_rad = devices["Heating"]["A_rad"]
-eps_sb = devices["Accumulator"]["eps_sb"]
-eps_rad = devices["Heating"]["eps_rad"]
+A_sb = 0.95
+A_rad = 0.2
+eps_sb = 0.4
+eps_rad = 1
 T0 = 290
 Tmin = max([devices[device]['T_min'] for device in devices.keys()])
 Tmax = min([devices[device]['T_max'] for device in devices.keys()])
@@ -44,7 +44,8 @@ for device in devices.keys():
     if devices[device]['a_init']:
         Q += devices[device]["Q"]
 
-S = a ** 2
+
+S = a ** 2 * 6
 S_sb = S * 4 / 6 * 0.70
 S_rad = S * 2 / 6
 
