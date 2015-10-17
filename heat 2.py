@@ -36,7 +36,7 @@ Tmin = max([devices[device]['T_min'] for device in devices.keys()])
 Tmax = min([devices[device]['T_max'] for device in devices.keys()])
 c = 800
 
-S = a ** 2
+S = a ** 2 * 6
 k_14_sb = 0.7
 k_14_rad = 0
 k_56_rad = 0.1
