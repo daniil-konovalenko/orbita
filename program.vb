@@ -57,7 +57,7 @@ END;
 
 WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
 	CALL radio.set_mode("ON");
-	CALL telemetry.send_long_message("RADIO ON");
+	CALL telemetry.send_log_message("RADIO ON");
 	CALL load.set_mode("OFF");
 	CALL cpu.set_cycle(5);
 END;
@@ -65,12 +65,12 @@ END;
 WHEN cpu.cycle == 5 DO
 	IF navigation.angle > tr_start_angle - da THEN
 		CALL radio.set_mode("ON");
-		CALL telemetry.send_long_message("TRANSMISSION STARTED");
+		CALL telemetry.send_log_message("TRANSMISSION STARTED");
 	END;
 	IF navigation.angle > tr_stop_angle + da THEN
 		CALL radio.set_mode("OFF");
-		CALL telemetry.send_long_message("RADIO OFF");
-		CALL telemetry.send_long_message("TRANSMISSION STOPPED");
+		CALL telemetry.send_log_message("RADIO OFF");
+		CALL telemetry.send_log_message("TRANSMISSION STOPPED");
 	END;
 END;
 
@@ -80,14 +80,12 @@ WHEN navigation.dark_side == TRUE AND heat_control.temperature < 283 DO
 	heater_on = TRUE;
 END;
 
-WHEN navigation.dark_side == FALSE DO
+WHEN navigation.dark_side == FALSE AND heater_on == TRUE DO
 	CALL heat_control.stop_heating();
 	heater_on = FALSE;
 END;
 
-WHEN heat_control.temperature > 288 AND heater_on == TRUE DO
+WHEN heat_control.temperature > 284 AND heater_on == TRUE DO
 	CALL heat_control.stop_heating();
 	heater_on = FALSE;
 END;
-
-	

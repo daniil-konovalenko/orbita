@@ -213,8 +213,8 @@ while time <= 6 * 3600:
 
     if int(time) == round(time, 3):
         logging.info(
-            'T={:.1f} Angle={:.3f} Temperature={:.2f} Q={:.3f} P={:.3f} Chrg={:.2f} qc={}'.format(
-                time, angle, temp, dT_dt() * c * m, P_total(), charge, qc()))
+            'T={:.1f} Angle={:.3f} Temperature={:.2f} Q={:.3f} P={:.3f} Chrg={:.2f} qc={} Camera={}'.format(
+                time, angle, temp, dT_dt() * c * m, P_total(), charge, qc(), camera_is_on()))
 
 logging.info(
     'Max temp: {:.2f} Min temp: {:.2f}'.format(max(temp_list), min(temp_list)))

@@ -44,9 +44,9 @@ for device in devices.keys():
     if devices[device]['a_init']:
         Q += devices[device]["Q"]
 
-S = a ** 2
+S = a ** 2 * 6
 S_sb = S * 4 / 6 * 0.70
-S_rad = S * 2 / 6
+S_rad = S * 2 / 6 * 0.1
 
 # Энергетические параметры
 
