@@ -11,8 +11,8 @@ LET heater_on = FALSE;
 REM Полетные параметры
 LET horb = 650000;
 LET w = -0.0614897;
-LET M0 = -0.001678;
-LET t = 508.71901;
+LET M0 = -0.0018692;
+LET t =  508.71901;
 
 REM Углы начала/конца передачи
 LET tr_start_angle = GMP - ACOS(R / (R + horb));
@@ -30,15 +30,14 @@ WHEN cpu.flight_time == 0.0 DO
 END;
 
 WHEN cpu.cycle == 1 AND cpu.flight_time >= t DO
-    CALL cpu.set_cycle(2);
+    CALL cpu.set_cycle(3);
     CALL orientation.stop_torsion();
 END;
 
-WHEN cpu.cycle == 2 OR (cpu.cycle == 3 AND navigation.angle + 1 < target_angle) DO
+WHEN cpu.cycle >= 2 DO
     IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
-		CALL cpu.set_cycle(3);
     ELSE
         IF orientation.angular_velocity > w THEN
             CALL orientation.start_torsion(0 - M);
@@ -52,19 +51,6 @@ WHEN cpu.cycle == 2 OR (cpu.cycle == 3 AND navigation.angle + 1 < target_angle) 
 END;
 
 WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle DO 
-	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
-        CALL orientation.stop_torsion();
-        moment = FALSE;
-    ELSE
-        IF orientation.angular_velocity > w THEN
-            CALL orientation.start_torsion(0 - M);
-            moment = TRUE;
-        END;
-        IF orientation.angular_velocity < w THEN
-            CALL orientation.start_torsion(M);
-            moment = TRUE;
-        END;
-    END;
 	CALL load.set_mode("ON");
 	CALL cpu.set_cycle(4);
 END;
@@ -72,37 +58,11 @@ END;
 WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
 	CALL radio.set_mode("ON");
 	CALL telemetry.send_long_message("RADIO ON");
-	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
-        CALL orientation.stop_torsion();
-        moment = FALSE;
-    ELSE
-        IF orientation.angular_velocity > w THEN
-            CALL orientation.start_torsion(0 - M);
-            moment = TRUE;
-        END;
-        IF orientation.angular_velocity < w THEN
-            CALL orientation.start_torsion(M);
-            moment = TRUE;
-        END;
-    END;
 	CALL load.set_mode("OFF");
 	CALL cpu.set_cycle(5);
 END;
 
 WHEN cpu.cycle == 5 DO
-	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
-        CALL orientation.stop_torsion();
-        moment = FALSE;
-    ELSE
-        IF orientation.angular_velocity > w THEN
-            CALL orientation.start_torsion(0 - M);
-            moment = TRUE;
-        END;
-        IF orientation.angular_velocity < w THEN
-            CALL orientation.start_torsion(M);
-            moment = TRUE;
-        END;
-    END;
 	IF navigation.angle > tr_start_angle - da THEN
 		CALL radio.set_mode("ON");
 		CALL telemetry.send_long_message("TRANSMISSION STARTED");
