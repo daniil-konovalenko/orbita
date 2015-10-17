@@ -31,23 +31,19 @@ radio_stop_angle = GMP + alpha
 
 # Тепловые параметры
 sigma = 5.67e-8
-A_sb = devices["Accumulator"]["A_sb"]
-A_rad = devices["Heating"]["A_rad"]
-eps_sb = devices["Accumulator"]["eps_sb"]
-eps_rad = devices["Heating"]["eps_rad"]
 T0 = 290
 Tmin = max([devices[device]['T_min'] for device in devices.keys()])
 Tmax = min([devices[device]['T_max'] for device in devices.keys()])
 c = 800
-Q = 0
-for device in devices.keys():
-    if devices[device]['a_init']:
-        Q += devices[device]["Q"]
 
 S = a ** 2
-S_sb = S * 4 / 6 * 0.70
-S_rad = S * 2 / 6
-
+k_14_sb = 1
+k_14_rad = 0
+k_56_rad = 1
+S_sb_cons = S * k_14_sb
+S_rad_cons = S * k_14_rad
+S_sb_em = 4 * k_14_sb * S
+S_rad_em = (4 * k_14_rad + 2 * k_56_rad) * S
 # Энергетические параметры
 
 max_charge = devices['Accumulator']["Cap"] * 3600
@@ -59,6 +55,12 @@ camera_start_angle = target - 1
 camera_stop_angle = target + 1
 shot = False
 
+w_self = -360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
+
+t_torsion = 2 * 270 / (w0 - w)
+
+M0 = (w - w0) * I / t_torsion
+
 
 def camera_is_on():
     if camera_start_angle <= full_angle <= camera_stop_angle and not shot:
@@ -67,29 +69,18 @@ def camera_is_on():
         return False
 
 
-def heat_on():
-    if qc() == 0:
+def radio_is_on():
+    if radio_start_angle <= angle <= radio_stop_angle:
         return True
     else:
         return False
 
 
-def stabilization():
-    w = -360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
-    t = 2 * 270 / (w0 - w)
-    M0 = (w - w0) * I / t
-    print('w = {} t = {} M0 = {}'.format(w, t, M0))
-
-
-# Переход с орбиты радиусом R1 на орбиту радиуса R2
-def dV(R1, R2):
-    V1 = sqrt(G * Me / R1) * (sqrt(2 * R2 / (R1 + R2)) - 1)
-    V2 = sqrt(G * Me / R2) * (1 - sqrt(2 * R1 / (R1 + R2)))
-    return V1 + V2
-
-
-def Pe():
-    return devices["Accumulator"]["n"] * S_sb / 4 * qc() - Qin()
+def torsion_is_on():
+    if time <= t_torsion:
+        return True
+    else:
+        return False
 
 
 def qc():
@@ -99,7 +90,29 @@ def qc():
         return 0
 
 
-def Qin():
+def P_cons():
+    P = 0
+    for device in devices.keys():
+        if devices[device]["a_init"]:
+            P += devices[device]["P"]
+    if camera_is_on():
+        P += devices["Camera"]["P"]
+    if radio_start_angle <= angle <= radio_stop_angle:
+        P += devices["Radio"]["P"]
+    if torsion_is_on():
+        P += devices["Torsion"]["P"]
+    return P
+
+
+def P_gen():
+    return devices["Accumulator"]["n"] * S * k_14_sb * qc()
+
+
+def P_total():
+    return P_gen() - P_cons()
+
+
+def Q_in():
     Q = 0
     for device in devices.keys():
         if devices[device]['a_init']:
@@ -108,16 +121,23 @@ def Qin():
         Q += devices['Radio']['P']
     if camera_is_on():
         Q += devices['Camera']['P']
+    if torsion_is_on():
+        Q += devices['Torsion']['P']
     return Q
 
 
+def Q_out():
+    return ((S_sb_cons * devices["Accumulator"]["A_sb"] +
+             S_rad_cons * devices["Heating"]["A_rad"]) * qc() -
+            (S_sb_em * devices["Accumulator"]["eps_sb"] +
+             S_rad_em * devices["Heating"]["eps_rad"]) * sigma * temp ** 4)
+
+
 def dT_dt():
-    Q_outer = ((S_sb * A_sb / 4) * qc() -
-                (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
-    Q_inner = Qin()
-    return (Q_outer + Q_inner) / (c * m)
+    return (Q_in() + Q_out()) / (c * m)
 
 
+'''
 def D():
     return (2 * horb * tan(devices["Camera"]['teta_max'] / 2) /
             (devices["Camera"]['d']))
@@ -151,6 +171,13 @@ def bandwidth(x_y):
     return 1 / 100 * P_2 * log2(M) / (1.2 * k * T_2)
 
 
+# Переход с орбиты радиусом R1 на орбиту радиуса R2
+def dV(R1, R2):
+    V1 = sqrt(G * Me / R1) * (sqrt(2 * R2 / (R1 + R2)) - 1)
+    V2 = sqrt(G * Me / R2) * (1 - sqrt(2 * R1 / (R1 + R2)))
+    return V1 + V2
+'''
+
 time = 0
 dt = 1 / 500
 temp = T0
@@ -158,35 +185,34 @@ temp = T0
 temp_list = [T0]
 time_list = [0]
 angle_list = [angle]
-P_list = [dT_dt()]
+Q_list = [dT_dt()]
 qc_list = [qc()]
 charge_list = [charge]
-Pe_list = [Pe()]
+P_list = [P_total()]
 
 while time <= 6 * 3600:
-
     angle += w * dt
     full_angle += w * dt
-    angle = angle % 360
+    angle %= 360
     temp += dT_dt() * dt
-    charge += Pe() * dt
+    charge += P_total() * dt
     charge = min(charge, max_charge)
 
     if int(time) / 5 == round(time / 5, 3):
         temp_list.append(temp)
         time_list.append(time)
         qc_list.append(qc())
-        P_list.append(dT_dt() * c * m)
+        Q_list.append(dT_dt() * c * m)
         angle_list.append(full_angle)
         charge_list.append(charge)
-        Pe_list.append(Pe())
+        P_list.append(P_total())
 
     time += dt
 
     if int(time) == round(time, 3):
         logging.info(
-            'T={:.1f} Angle={:.3f} Temperature={:.2f} Q={:.3f} Pe={:.3f} Chrg={:.2f} qc={}'.format(
-                time, angle, temp, dT_dt() * c * m, Pe(), charge, qc()))
+            'T={:.1f} Angle={:.3f} Temperature={:.2f} Q={:.3f} P={:.3f} Chrg={:.2f} qc={}'.format(
+                time, angle, temp, dT_dt() * c * m, P_total(), charge, qc()))
 
 logging.info(
     'Max temp: {:.2f} Min temp: {:.2f}'.format(max(temp_list), min(temp_list)))
@@ -194,11 +220,11 @@ logging.info(
 data = {
     'angle': angle_list,
     'temp': temp_list,
-    'P': P_list,
+    'Q': P_list,
     'time': time_list,
     'qc': qc_list,
     'charge': charge_list,
-    'Pe': Pe_list
+    'P': P_list
 }
 with open('telemetry.json', 'w', encoding='utf8') as fout:
     json.dump(data, fout)
