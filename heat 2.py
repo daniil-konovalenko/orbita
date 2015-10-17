@@ -37,9 +37,9 @@ Tmax = min([devices[device]['T_max'] for device in devices.keys()])
 c = 800
 
 S = a ** 2
-k_14_sb = 1
+k_14_sb = 0.7
 k_14_rad = 0
-k_56_rad = 1
+k_56_rad = 0.1
 S_sb_cons = S * k_14_sb
 S_rad_cons = S * k_14_rad
 S_sb_em = 4 * k_14_sb * S

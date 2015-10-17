@@ -34,24 +34,8 @@ WHEN cpu.cycle == 1 AND cpu.flight_time >= t DO
     CALL orientation.stop_torsion();
 END;
 
-WHEN cpu.cycle == 2 DO
-    IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
-        CALL orientation.stop_torsion();
-        moment = FALSE;
-		CALL cpu.set_cycle(3);
-    ELSE
-        IF orientation.angular_velocity > w THEN
-            CALL orientation.start_torsion(0 - M);
-            moment = TRUE;
-        END;
-        IF orientation.angular_velocity < w THEN
-            CALL orientation.start_torsion(M);
-            moment = TRUE;
-        END;
-    END;
-END;
-
-WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle DO 
+REM Начало съемки
+WHEN cpu.cycle == 2 AND navigation.angle + 1 > target_angle DO
 	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
@@ -66,10 +50,11 @@ WHEN cpu.cycle == 3 AND navigation.angle + 1 > target_angle DO
         END;
     END;
 	CALL load.set_mode("ON");
-	CALL cpu.set_cycle(4);
+	CALL cpu.set_cycle(3);
 END;
 
-WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
+REM Конец съемки
+WHEN cpu.cycle == 3 AND navigation.angle - 1 > target_angle DO
 	IF moment == TRUE AND ABS(orientation.angular_velocity - w) < dw THEN
         CALL orientation.stop_torsion();
         moment = FALSE;
@@ -85,8 +70,8 @@ WHEN cpu.cycle == 4 AND navigation.angle - 1 > target_angle DO
     END;
 	CALL radio.set_mode("ON");
 	CALL load.set_mode("OFF");
-	CALL radio.set_mode("OFF");
-	CALL cpu.set_cycle(5);
+	REM в этот момент снимок передается в подсистему radio
+	CALL cpu.set_cycle(4);
 END;
 
 WHEN cpu.cycle == 5 DO
@@ -127,4 +112,3 @@ WHEN heat_control.temperature > 288 AND heater_on == TRUE DO
 	heater_on = TRUE;
 END;
 
-	
