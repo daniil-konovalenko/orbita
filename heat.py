@@ -1,4 +1,4 @@
-from math import sqrt, pi, acos, degrees, cos, sin, radians, log2, tan
+from math import sqrt, pi, acos, degrees, cos, sin, radians, log2, tan, asin
 from matplotlib import pyplot as plt
 import json
 import logging
@@ -116,7 +116,7 @@ def Qin():
 
 def dT_dt():
     Q_outer = ((S_sb * A_sb / 4) * qc() -
-                (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
+               (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp ** 4)
     Q_inner = Qin()
     return (Q_outer + Q_inner) / (c * m)
 
@@ -133,25 +133,22 @@ def xy(alpha, r=R + horb):
     else:
         x = r * cos(radians(90 - alpha))
         y = r * sin(radians(90 - alpha))
-    return (x, y)
+    return x, y
 
 
-def bandwidth(x_y):
+def bandwidth(x_y, GMP):
     x = x_y[0]
     y = x_y[1]
-    x_gmp = R * cos(radians(195))
-    y_gmp = R * sin(radians(195))
+    x_gmp = R * cos(radians(GMP))
+    y_gmp = R * sin(radians(GMP))
     M = 4
     G_1 = devices['Radio']['G1']
     G_2 = devices['Radio']['G2']
     P1 = devices['Radio']['P_tr']
     l = 299792458 / devices['Radio']['f']  # Длина волны
     L_gmp = sqrt((x_gmp - x) ** 2 + (y_gmp - y) ** 2)
-    L_12 = (4 * pi * L_gmp / l) ** 2
-    P_2 = G_1 * G_2 * P1 / L_12
     T_2 = 1000
-
-    return 1 / 100 * G_1 * G_2 * P1 / (4 * pi * L_gmp / l) ** 2 * (log2(M) / (1.2 * k * T_2))
+    return 1 / 100 * (G_1 * G_2 * P1 / ((4 * pi * L_gmp / l) ** 2)) * (log2(M) / (1.2 * k * T_2))
 
 camera_start_angle = target - delta_angle('Camera')
 camera_stop_angle = target + delta_angle('Camera')
