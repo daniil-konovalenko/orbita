@@ -155,8 +155,8 @@ def bandwidth(x_y, GMP):
         log2(M) / (1.2 * k * T_2))) / 8 / 1024 / 1024
 
 
-camera_start_angle = target - delta_angle('Camera')
-camera_stop_angle = target + delta_angle('Camera')
+camera_start_angle = target - delta_angle('Camera', horb)
+camera_stop_angle = target + delta_angle('Camera', horb)
 shot = False
 
 radio_start_angle = GMP - delta_angle('Radio')
