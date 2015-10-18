@@ -52,11 +52,11 @@ charge = max_charge
 # Параметры камеры
 
 
-
+# Дельта угол начала / конца работы устройства с углом раскрытия a_open
 def delta_angle(device):
-    if device['a_open'] == 180:
+    if devices[device]['a_open'] == 180:
         return acos(R / (R + horb))
-    gamma = device['a_open']
+    gamma = devices[device]['a_open']
     NK = (2 * (R + horb) * cos(gamma / 2) - sqrt(4 * (R + horb)**2 * cos(gamma / 2)**2 - 4 * (((R + horb)**2) - R**2))) / 2
     return degrees(asin(NK / R * sin(gamma / 2)))
 
