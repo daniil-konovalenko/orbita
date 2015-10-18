@@ -159,8 +159,8 @@ camera_start_angle = target - delta_angle('Camera', horb)
 camera_stop_angle = target + delta_angle('Camera', horb)
 shot = False
 
-radio_start_angle = GMP - delta_angle('Radio')
-radio_stop_angle = GMP + delta_angle('Radio')
+radio_start_angle = GMP - delta_angle('Radio', horb)
+radio_stop_angle = GMP + delta_angle('Radio', horb)
 
 time = 0
 dt = 1 / 500
