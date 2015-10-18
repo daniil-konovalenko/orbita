@@ -79,11 +79,11 @@ def heat_on():
         return False
 
 
-def stabilization():
+def stabilization(w0, gamma, horb):
     w = -360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
-    t = 2 * 270 / (w0 - w)
+    t = 2 * gamma / (w0 - w)
     M0 = (w - w0) * I / t
-    print('w = {:.5f} t = {:.5f} M0 = {:6f}'.format(w, t, M0))
+    return {'w': w, 't': t, 'M0': M0}
 
 
 # Переход с орбиты радиусом R1 на орбиту радиуса R2
