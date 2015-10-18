@@ -61,7 +61,7 @@
     "P_heat": 20,
     "A_rad": 0.2,
     "eps_rad": 1,
-    "a_init": 0
+    "a_init": 1
   },
   "Telemetry":{
     "m": 0.3,

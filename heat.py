@@ -37,18 +37,16 @@ A_sb = devices["Accumulator"]["A_sb"]
 A_rad = devices["Heating"]["A_rad"]
 eps_sb = devices["Accumulator"]["eps_sb"]
 eps_rad = devices["Heating"]["eps_rad"]
+
 T0 = 290
+
 Tmin = max([devices[device]['T_min'] for device in devices.keys()])
 Tmax = min([devices[device]['T_max'] for device in devices.keys()])
 c = 800
-Q = 0
-for device in devices.keys():
-    if devices[device]['a_init']:
-        Q += devices[device]["Q"]
 
 S = a ** 2 * 6
-S_sb = S * 4 / 6 * 0.65
-S_rad = S * 2 / 6
+S_sb = S * 4 / 6 * 0.7
+S_rad = S * 2 / 6 * 0.1
 
 # Энергетические параметры
 
@@ -117,7 +115,7 @@ def Qin():
 
 def dT_dt():
     Q_outer = ((S_sb * A_sb / 4) * qc() -
-                (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
+               (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp ** 4)
     Q_inner = Qin()
     return (Q_outer + Q_inner) / (c * m)
 
@@ -171,7 +169,7 @@ while time <= 6 * 3600:
 
     angle += w * dt
     full_angle += w * dt
-    angle = angle % 360
+    angle %= 360
     temp += dT_dt() * dt
     charge += Pe() * dt
     charge = min(charge, max_charge)
@@ -189,7 +187,7 @@ while time <= 6 * 3600:
 
     if int(time) == round(time, 3):
         logging.info(
-            'T={:.1f} Angle={:.3f} Temperature={:.2f} Q={:.3f} Pe={:.3f} Chrg={:.2f} qc={}'.format(
+            'T={:0>7.1f} Angle={:+.3f} Temperature={:+.2f} Q={:+.3f} Pe={:+.3f} Chrg={:+.2f} qc={}'.format(
                 time, angle, temp, dT_dt() * c * m, Pe(), charge, qc()))
 
 logging.info(

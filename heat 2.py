@@ -39,7 +39,7 @@ c = 800
 S = a ** 2 * 6
 k_14_sb = 0.7
 k_14_rad = 0
-k_56_rad = 0.1
+k_56_rad = 0.11
 S_sb_cons = S * k_14_sb
 S_rad_cons = S * k_14_rad
 S_sb_em = 4 * k_14_sb * S
@@ -78,12 +78,6 @@ def radio_is_on():
         return False
 
 
-def torsion_is_on():
-    if time <= t_torsion:
-        return True
-    else:
-        return False
-
 
 def qc():
     if 0 <= angle <= 180:
@@ -101,8 +95,6 @@ def P_cons():
         P += devices["Camera"]["P"]
     if radio_start_angle <= angle <= radio_stop_angle:
         P += devices["Radio"]["P"]
-    if torsion_is_on():
-        P += devices["Torsion"]["P"]
     return P
 
 
@@ -123,8 +115,6 @@ def Q_in():
         Q += devices['Radio']['P']
     if camera_is_on():
         Q += devices['Camera']['P']
-    if torsion_is_on():
-        Q += devices['Torsion']['P']
     return Q
 
 
