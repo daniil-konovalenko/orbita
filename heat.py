@@ -139,8 +139,8 @@ def xy(alpha, r=R + horb):
 def bandwidth(x_y, GMP):
     x = x_y[0]
     y = x_y[1]
-    x_gmp = R * cos(radians(GMP))
-    y_gmp = R * sin(radians(GMP))
+    x_gmp = R * cos(radians(450 - GMP))
+    y_gmp = R * sin(radians(450 - GMP))
     M = 4
     G_1 = devices['Radio']['G1']
     G_2 = devices['Radio']['G2']
