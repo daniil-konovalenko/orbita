@@ -24,10 +24,6 @@ target = 81
 angle = 0
 full_angle = angle
 
-# TODO:  Вставить новую формулу угла
-alpha = degrees(acos(R / (R + horb)))
-
-
 
 # Тепловые параметры
 sigma = 5.67e-8
@@ -158,7 +154,7 @@ def bandwidth(x_y):
     return 1 / 100 * G_1 * G_2 * P1 / (4 * pi * L_gmp / l) ** 2 * (log2(M) / (1.2 * k * T_2))
 
 camera_start_angle = target - delta_angle('Camera')
-camera_stop_angle = target + 1
+camera_stop_angle = target + delta_angle('Camera')
 shot = False
 
 radio_start_angle = GMP - delta_angle('Radio')
