@@ -1,4 +1,5 @@
-from math import sqrt, pi, acos, degrees, cos, sin, radians, log2, tan, asin
+from math import sqrt, pi, acos, degrees, \
+    cos, sin, radians, log2, tan, asin
 from matplotlib import pyplot as plt
 import json
 import logging
@@ -11,7 +12,8 @@ Me = 5.9726e24
 R = 6371032
 k = 1.38064852e-23
 horb = 650000
-m = sum([devices[device]['m'] for device in devices.keys()])
+m = sum([devices[device]['m'] for device in devices.keys()]) + \
+    devices["Engine"]['fuel']*devices["Engine"]['ro_f']
 w0 = 1
 vorb = sqrt(G * Me / (R + horb))
 a = 0.5
@@ -36,7 +38,7 @@ eps_rad = devices["Heating"]["eps_rad"]
 T0 = 290
 Tmin = max([devices[device]['T_min'] for device in devices.keys()])
 Tmax = min([devices[device]['T_max'] for device in devices.keys()])
-c = 800
+c = devices["Body"]["c"]
 
 S = a ** 2 * 6
 S_sb = S * 4 / 6 * 0.65
@@ -77,7 +79,7 @@ def heat_on():
         return False
 
 
-def stabilization(w0, gamma, horb):
+def init_stabilization(w0, gamma, horb):
     w = -360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
     t = 2 * gamma / (w0 - w)
     M0 = (w - w0) * I / t
@@ -174,7 +176,6 @@ qc_list = [qc()]
 charge_list = [charge]
 Pe_list = [Pe()]
 
-logging.info('Stabilized w:{st[w]:4e} t:{st[t]:4f} M0:{st[M0]:10e}'.format(st=stabilization(w0, gamma, horb)))
 while time <= 6 * 3600:
 
     angle += w * dt
@@ -197,7 +198,7 @@ while time <= 6 * 3600:
 
     if int(time) == round(time, 3):
         logging.info(
-            'T={:0>7.1f} Angle={:+.3f} Temperature={:+.2f} Q={:+.3f} Pe={:+.3f} Chrg={:+.2f} qc={}'.format(
+            'T={:0>7.1f} Angle={:0>7+.3f} Temperature={:+.2f} Q={:+.3f} Pe={:+.3f} Chrg={:+.2f} qc={}'.format(
                 time, angle, temp, dT_dt() * c * m, Pe(), charge, qc()))
 
 logging.info(
