@@ -86,6 +86,8 @@ def stabilization(w0, gamma, horb):
 
 # Переход с орбиты радиусом R1 на орбиту радиуса R2
 def dV(R1, R2):
+    R1 += R
+    R2 += R
     V1 = sqrt(G * Me / R1) * (sqrt(2 * R2 / (R1 + R2)) - 1)
     V2 = sqrt(G * Me / R2) * (1 - sqrt(2 * R1 / (R1 + R2)))
     return V1 + V2
