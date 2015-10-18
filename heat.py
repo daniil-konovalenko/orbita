@@ -27,8 +27,6 @@ full_angle = angle
 # TODO:  Вставить новую формулу угла
 alpha = degrees(acos(R / (R + horb)))
 
-radio_start_angle = GMP - alpha
-radio_stop_angle = GMP + alpha
 
 
 # Тепловые параметры
@@ -37,16 +35,18 @@ A_sb = devices["Accumulator"]["A_sb"]
 A_rad = devices["Heating"]["A_rad"]
 eps_sb = devices["Accumulator"]["eps_sb"]
 eps_rad = devices["Heating"]["eps_rad"]
-
 T0 = 290
-
 Tmin = max([devices[device]['T_min'] for device in devices.keys()])
 Tmax = min([devices[device]['T_max'] for device in devices.keys()])
 c = 800
+Q = 0
+for device in devices.keys():
+    if devices[device]['a_init']:
+        Q += devices[device]["Q"]
 
 S = a ** 2 * 6
-S_sb = S * 4 / 6 * 0.7
-S_rad = S * 2 / 6 * 0.1
+S_sb = S * 4 / 6 * 0.65
+S_rad = S * 2 / 6 * 0.11
 
 # Энергетические параметры
 
@@ -55,9 +55,14 @@ charge = max_charge
 
 # Параметры камеры
 
-camera_start_angle = target - 1
-camera_stop_angle = target + 1
-shot = False
+
+
+def delta_angle(device):
+    if device['a_open'] == 180:
+        return acos(R / (R + horb))
+    gamma = device['a_open']
+    NK = (2 * (R + horb) * cos(gamma / 2) - sqrt(4 * (R + horb)**2 * cos(gamma / 2)**2 - 4 * (((R + horb)**2) - R**2))) / 2
+    return degrees(asin(NK / R * sin(gamma / 2)))
 
 
 def camera_is_on():
@@ -80,7 +85,7 @@ def stabilization():
     w = -360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
     t = 2 * 270 / (w0 - w)
     M0 = (w - w0) * I / t
-    print('w = {} t = {} M0 = {}'.format(w, t, M0))
+    print('w = {:.5f} t = {:.5f} M0 = {:6f}'.format(w, t, M0))
 
 
 # Переход с орбиты радиусом R1 на орбиту радиуса R2
@@ -115,7 +120,7 @@ def Qin():
 
 def dT_dt():
     Q_outer = ((S_sb * A_sb / 4) * qc() -
-               (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp ** 4)
+                (S_sb * eps_sb + S_rad * eps_rad) * sigma * temp**4)
     Q_inner = Qin()
     return (Q_outer + Q_inner) / (c * m)
 
@@ -150,8 +155,14 @@ def bandwidth(x_y):
     P_2 = G_1 * G_2 * P1 / L_12
     T_2 = 1000
 
-    return 1 / 100 * P_2 * log2(M) / (1.2 * k * T_2)
+    return 1 / 100 * G_1 * G_2 * P1 / (4 * pi * L_gmp / l) ** 2 * (log2(M) / (1.2 * k * T_2))
 
+camera_start_angle = target - delta_angle('Camera')
+camera_stop_angle = target + 1
+shot = False
+
+radio_start_angle = GMP - delta_angle('Radio')
+radio_stop_angle = GMP + delta_angle('Radio')
 
 time = 0
 dt = 1 / 500
