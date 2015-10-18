@@ -19,6 +19,8 @@ I = 1 / 12 * 2 * a ** 2 * m
 T = 2 * pi * (R + horb) / vorb
 w = 360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
 
+# Углы
+gamma = 270
 GMP = 216
 target = 81
 angle = 0
@@ -35,10 +37,6 @@ T0 = 290
 Tmin = max([devices[device]['T_min'] for device in devices.keys()])
 Tmax = min([devices[device]['T_max'] for device in devices.keys()])
 c = 800
-Q = 0
-for device in devices.keys():
-    if devices[device]['a_init']:
-        Q += devices[device]["Q"]
 
 S = a ** 2 * 6
 S_sb = S * 4 / 6 * 0.65
@@ -174,6 +172,7 @@ qc_list = [qc()]
 charge_list = [charge]
 Pe_list = [Pe()]
 
+logging.info('Stabilized w:{st[w]:4e} t:{st[t]:4f} M0:{st[M0]:10e}'.format(st=stabilization(w0, gamma, horb)))
 while time <= 6 * 3600:
 
     angle += w * dt
