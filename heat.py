@@ -135,7 +135,7 @@ def xy(alpha, r=R + horb):
         y = r * sin(radians(90 - alpha))
     return x, y
 
-
+# Расчет ширины канала
 def bandwidth(x_y, GMP):
     x = x_y[0]
     y = x_y[1]
