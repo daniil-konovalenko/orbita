@@ -57,7 +57,9 @@ def delta_angle(device, h):
     if devices[device]['a_open'] == 180:
         return degrees(acos(R / (R + h)))
     gamma = radians(devices[device]['a_open'])
-    NK = (2 * (R + h) * cos(gamma / 2) - sqrt(4 * (R + h)**2 * cos(gamma / 2)**2 - 4 * (((R + h)**2) - R**2))) / 2
+    NK = (2 * (R + h) * cos(gamma / 2) - sqrt(
+        4 * (R + h) ** 2 * cos(gamma / 2) ** 2 - 4 * (
+            ((R + h) ** 2) - R ** 2))) / 2
     return degrees(asin(NK / R * sin(gamma / 2)))
 
 
@@ -135,6 +137,7 @@ def xy(alpha, r=R + horb):
         y = r * sin(radians(90 - alpha))
     return x, y
 
+
 # Расчет ширины канала
 def bandwidth(x_y, GMP):
     x = x_y[0]
@@ -148,7 +151,9 @@ def bandwidth(x_y, GMP):
     l = 299792458 / devices['Radio']['f']  # Длина волны
     L_gmp = sqrt((x_gmp - x) ** 2 + (y_gmp - y) ** 2)
     T_2 = 1000
-    return 1 / 100 * (G_1 * G_2 * P1 / ((4 * pi * L_gmp / l) ** 2)) * (log2(M) / (1.2 * k * T_2))
+    return (1 / 100 * (G_1 * G_2 * P1 / ((4 * pi * L_gmp / l) ** 2)) * (
+        log2(M) / (1.2 * k * T_2))) / 8 / 1024 / 1024
+
 
 camera_start_angle = target - delta_angle('Camera')
 camera_stop_angle = target + delta_angle('Camera')
