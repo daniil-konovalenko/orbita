@@ -99,7 +99,7 @@
     "P": 5,
     "Q": 5,
     "d": 4864,
-    "teta_max": 6.4,
+    "a_open": 6.4,
     "data_flow": 70,
     "storage": 4096,
     "a_init": 0,
