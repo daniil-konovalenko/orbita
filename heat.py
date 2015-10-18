@@ -1,5 +1,4 @@
-from math import sqrt, pi, acos, degrees, \
-    cos, sin, radians, log2, tan, asin
+from math import sqrt, pi, acos, degrees, cos, sin, radians, log2, tan, asin
 from matplotlib import pyplot as plt
 import json
 import logging
@@ -12,8 +11,7 @@ Me = 5.9726e24
 R = 6371032
 k = 1.38064852e-23
 horb = 650000
-m = sum([devices[device]['m'] for device in devices.keys()]) + \
-    devices["Engine"]['fuel']*devices["Engine"]['ro_f']
+m = sum([devices[device]['m'] for device in devices.keys()]) + devices["Engine"]['fuel_mass']
 w0 = 1
 vorb = sqrt(G * Me / (R + horb))
 a = 0.5
@@ -77,10 +75,19 @@ def heat_on():
         return True
     else:
         return False
+# Первая стабилизация
+def pre_stabilization(w0, w):
+    t = 2 * 360 / (w0)
+    M0 = I * (- w0) / t
+    return {'w': w, 't': t, 'M0': M0}
+# Вторая стабилизация
+def second_stabilization(alpha0):
+    w_t = -0.0326331696
+    t = (180 - alpha0) / (w + w_t / 2)
+    M0 = I * w_t / t
+    return {'w': w_t, 't': t, 'M0': M0}
 
-
-def init_stabilization(w0, gamma, horb):
-    w = -360 * sqrt(G * Me / (R + horb)) / (2 * pi * (R + horb))
+def init_stabilization(w0, w, gamma, horb):
     t = 2 * gamma / (w0 - w)
     M0 = (w - w0) * I / t
     return {'w': w, 't': t, 'M0': M0}
